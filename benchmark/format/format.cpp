@@ -8,7 +8,7 @@
 #include <sstream>
 
 template <std::integral T>
-void bm_format_single_type(benchmark::State& state)
+void bm_format_single_int(benchmark::State& state)
 {
     std::mt19937 rng;
     std::uniform_int_distribution distribution(std::numeric_limits<T>::min(), std::numeric_limits<T>::max());
@@ -20,19 +20,20 @@ void bm_format_single_type(benchmark::State& state)
         std::cout << std::format("Value={}", value);
     }
 }
-BENCHMARK(bm_format_single_type<int8_t>);
-BENCHMARK(bm_format_single_type<uint8_t>);
-BENCHMARK(bm_format_single_type<int16_t>);
-BENCHMARK(bm_format_single_type<uint16_t>);
-BENCHMARK(bm_format_single_type<int32_t>);
-BENCHMARK(bm_format_single_type<uint32_t>);
-BENCHMARK(bm_format_single_type<int64_t>);
-BENCHMARK(bm_format_single_type<uint64_t>);
+BENCHMARK(bm_format_single_int<int8_t>);
+BENCHMARK(bm_format_single_int<uint8_t>);
+BENCHMARK(bm_format_single_int<int16_t>);
+BENCHMARK(bm_format_single_int<uint16_t>);
+BENCHMARK(bm_format_single_int<int32_t>);
+BENCHMARK(bm_format_single_int<uint32_t>);
+BENCHMARK(bm_format_single_int<int64_t>);
+BENCHMARK(bm_format_single_int<uint64_t>);
 
-void bm_format_single_type_float(benchmark::State& state)
+template <std::floating_point T>
+void bm_format_single_float(benchmark::State& state)
 {
     std::mt19937 rng;
-    std::uniform_real_distribution distribution(0.0f, 1.0f);
+    std::uniform_real_distribution<T> distribution(0.0, 1.0);
     const float value = distribution(rng);
 
     cout_redirect redirect{};
@@ -41,21 +42,8 @@ void bm_format_single_type_float(benchmark::State& state)
         std::cout << std::format("Value={}", value);
     }
 }
-BENCHMARK(bm_format_single_type_float);
-
-void bm_format_single_type_double(benchmark::State& state)
-{
-    std::mt19937 rng;
-    std::uniform_real_distribution distribution(0.0, 1.0);
-    const double value = distribution(rng);
-
-    cout_redirect redirect{};
-    for (auto _ : state)
-    {
-        std::cout << std::format("Value={}", value);
-    }
-}
-BENCHMARK(bm_format_single_type_double);
+BENCHMARK(bm_format_single_float<float>);
+BENCHMARK(bm_format_single_float<double>);
 
 template <typename T>
 void bm_format_single_type_string(benchmark::State& state)
@@ -78,13 +66,10 @@ static void bm_format_complex_table([[maybe_unused]] benchmark::State& state)
     for(auto _ : state)
     {
         std::cout << std::format("{:<15} {:<10} {:<5} {:<10} {:<10} {:<15} {:<15}\n", "Name", "Valid", "Age", "Height", "Weight", "City", "Unique ID");
-        std::cout << std::format("{:-^80}\n", '-');
         for (const auto &[name, is_valid, age, height, weight, city, unique_id] : table_entries)
         {
             std::cout << std::format("{:<15} {:<#10b} {:<5} {:<10.2f} {:<10.2f} {:<15} {:<15}\n", name, is_valid, age, height, weight, city, unique_id);
         }
     }
 }
-BENCHMARK(bm_format_complex_table);
-
-
+BENCHMARK(bm_format_complex_table)->Unit(benchmark::kMicrosecond);
