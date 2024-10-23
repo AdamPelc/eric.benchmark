@@ -110,7 +110,7 @@ void bm_printf_single_type_string(benchmark::State& state)
 BENCHMARK(bm_printf_single_type_string<std::string>);
 BENCHMARK(bm_printf_single_type_string<std::string_view>);
 
-static void bm_format_complex_table([[maybe_unused]] benchmark::State& state)
+static void bm_printf_complex_table(benchmark::State& state)
 {
     const auto table_entries = get_table_entries();
 
@@ -138,4 +138,4 @@ static void bm_format_complex_table([[maybe_unused]] benchmark::State& state)
         }
     }
 }
-BENCHMARK(bm_format_complex_table)->Unit(benchmark::kMicrosecond);
+BENCHMARK(bm_printf_complex_table)->Unit(benchmark::kMicrosecond);
