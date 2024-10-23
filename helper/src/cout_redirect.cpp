@@ -3,7 +3,7 @@
 #include <sstream>
 #include <unistd.h>
 
-cout_redirect::cout_redirect(std::ostringstream& buffer) : m_buffer(buffer)
+cout_redirect::cout_redirect() : m_buffer(4096, 0)
 {
     // Create pipe
     if(pipe(m_pipefd) != 0)
@@ -55,11 +55,10 @@ cout_redirect::~cout_redirect()
     }
 }
 
-void cout_redirect::readPipe() const
+void cout_redirect::readPipe()
 {
-    char buffer[4096];
-    ssize_t count;
-    while (m_is_active && (count = read(m_pipefd[0], buffer, sizeof(buffer))) > 0) {
-        m_buffer.write(buffer, count);
+    while (m_is_active)
+    {
+        read(m_pipefd[0], m_buffer.data(), std::size(m_buffer));
     }
 }
