@@ -16,5 +16,4 @@ static void bm_printf_int(benchmark::State& state) {
         }
     }
 }
-
 BENCHMARK(bm_printf_int);
